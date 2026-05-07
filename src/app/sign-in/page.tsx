@@ -5,7 +5,7 @@ import { SignInForm } from "./sign-in-form";
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { next?: string; sent?: string };
+  searchParams: { next?: string; sent?: string; error?: string };
 }) {
   const supabase = createClient();
   const {
@@ -22,6 +22,16 @@ export default async function SignInPage({
             Sign in with your email — we&apos;ll send you a magic link.
           </p>
         </div>
+        {searchParams.error && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+            <p className="font-medium">Couldn&apos;t sign you in.</p>
+            <p className="mt-1 break-words">
+              {searchParams.error === "missing_code"
+                ? "The sign-in link was missing its code. Try requesting a new magic link."
+                : searchParams.error}
+            </p>
+          </div>
+        )}
         <SignInForm next={searchParams.next} sent={searchParams.sent === "1"} />
       </div>
     </main>
