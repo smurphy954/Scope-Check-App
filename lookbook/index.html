@@ -855,11 +855,21 @@
 </section>
 
 <script>
-  // Hide placeholder text only when the matching <img> actually rendered.
+  // For every <img>, try .jpg, .jpeg, .png, .webp in order. If none load,
+  // hide the <img> so the placeholder shows through. This means you can
+  // save photos in whatever extension your browser gives you — no renaming.
   document.querySelectorAll('.photo img').forEach(img => {
-    if (!img.complete || img.naturalWidth === 0) {
-      img.addEventListener('error', () => { img.style.display = 'none'; });
-    }
+    const original = img.getAttribute('src');
+    const base = original.replace(/\.(jpe?g|png|webp)$/i, '');
+    const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'WEBP'];
+    let i = 0;
+    const tryNext = () => {
+      if (i >= exts.length) { img.style.display = 'none'; return; }
+      img.src = `${base}.${exts[i++]}`;
+    };
+    img.addEventListener('error', tryNext);
+    // Kick off with the first extension (skip the original we already set).
+    tryNext();
   });
 </script>
 
