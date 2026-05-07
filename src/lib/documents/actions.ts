@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   ALLOWED_MIME_TYPES,
   DOCUMENT_TYPES,
@@ -81,14 +82,20 @@ export async function recordDocument(input: z.infer<typeof RecordSchema>) {
     return { error: insertErr.message };
   }
 
-  const { error: jobErr } = await supabase.from("jobs").insert({
+  // jobs is server-managed (RLS locked to service_role). Use the admin
+  // client so the user's session doesn't get rejected by RLS.
+  const admin = createAdminClient();
+  const { error: jobErr } = await admin.from("jobs").insert({
     kind: "extract_document",
     project_id: projectId,
     payload: { document_id: documentId },
   });
 
   if (jobErr) {
-    return { error: `document saved but job not queued: ${jobErr.message}` };
+    // Roll back the documents row so we don't leave one stuck on 'queued'
+    // forever with no job behind it.
+    await supabase.from("documents").delete().eq("id", documentId);
+    return { error: `extraction job not queued: ${jobErr.message}` };
   }
 
   revalidatePath(`/projects/${projectId}/documents`);
@@ -119,7 +126,8 @@ export async function rerunExtraction(documentId: string) {
     })
     .eq("id", doc.id);
 
-  await supabase.from("jobs").insert({
+  const admin = createAdminClient();
+  await admin.from("jobs").insert({
     kind: "extract_document",
     project_id: doc.project_id,
     payload: { document_id: doc.id },
