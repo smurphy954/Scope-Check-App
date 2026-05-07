@@ -2,22 +2,24 @@
 
 Job site submittal & compliance assistant. Mobile-first PWA built with Next.js 14, Supabase, and Anthropic Claude. Deploys to **Render** (web service + background worker).
 
-## Status — Phase 1: Foundation (✅ ready to test)
+## Status — Phase 2a: Document upload + Claude extraction (✅ ready to test)
 
-What's wired up:
+Phase 1 (foundation) and Phase 2a (uploads + extraction) are wired up. Next is Phase 2b (Voyage embeddings for RAG), then Phase 3 (room reconciliation).
 
-- Magic-link sign-in (Supabase Auth, email OTP)
-- Auto-open last project on the root route
-- Project list — create / select / archive / unarchive
-- Project home with quick action tiles (Camera, Rooms, Upload Docs, Chat) — tiles route to clearly-labeled "Phase X" placeholders for now
-- Settings screen with profile + sign-out
-- Auth-protected routes via middleware
-- PWA manifest + minimal service worker (install-to-homescreen works)
-- SQL migrations with row-level security (`profiles`, `projects`, `jobs`)
-- Background worker (`pnpm worker`) that polls a Postgres-backed jobs queue. No-op in Phase 1; real handlers (e.g. `extract_document`) land in Phase 2.
-- `render.yaml` Blueprint that deploys both the web service and the worker on Render Pro.
+**Phase 1:**
+- Magic-link sign-in, auto-open last project, project list (create/select/archive), project home with quick action tiles, settings + sign-out, auth middleware.
+- PWA manifest + minimal service worker.
+- `render.yaml` deploys both the web service and the background worker on Render Pro.
 
-Phases 2–6 will come on top of this foundation — folder structure and queue infrastructure already accommodate them.
+**Phase 2a:**
+- Upload screen at *Documents* with type tabs (Drawings / Contracts / Submittals), multi-file picker, 25 MB cap per file, per-file progress + status.
+- Files land in Supabase Storage at `{project_id}/{document_id}/{filename}` (private bucket, RLS-locked to project owner).
+- Each upload enqueues an `extract_document` job. The worker:
+  - **Drawings + submittals** → Claude vision via native PDF input (Opus 4.7).
+  - **Contracts** → text extraction via `unpdf`, then Claude (Haiku 4.5). Falls back to vision if the PDF turns out to be scanned.
+  - Writes structured findings into `requirements` (drawings + contracts) or `submittal_products` (submittals).
+- Document library + detail screens use Supabase Realtime — status flips from queued → processing → ready live, no polling.
+- Re-run extraction button per doc.
 
 ---
 
@@ -58,12 +60,15 @@ Sidebar → **Project Settings** → **API**. You'll need three values:
 
 ### 2c. Run the database migrations
 
-- Sidebar → **SQL editor** → **New query**.
-- Paste `supabase/migrations/0001_phase1_init.sql`, run.
-- New query, paste `supabase/migrations/0002_jobs.sql`, run.
-- Verify in **Table Editor**: you should see `profiles`, `projects`, `jobs`. RLS should be enabled on all three.
+In Supabase → **SQL editor**, run each migration file in order as a separate query:
 
-> Why this matters: row-level security is what makes users only see their own projects. Don't skip it.
+- `supabase/migrations/0001_phase1_init.sql` — profiles + projects
+- `supabase/migrations/0002_jobs.sql` — jobs queue + claim_next_job RPC
+- `supabase/migrations/0003_documents.sql` — documents + extracted findings + storage bucket + Realtime publication
+
+After all three run, verify in **Table Editor**: you should see `profiles`, `projects`, `jobs`, `documents`, `requirements`, `submittal_products`. RLS enabled on each. Under **Storage**, you should see a `documents` bucket.
+
+> Why this matters: row-level security is what makes users only see their own projects. The storage bucket policies in 0003 enforce the same rule for uploaded files. Don't skip any of these.
 
 ## 3. Anthropic API key (optional in Phase 1)
 
@@ -98,23 +103,24 @@ pnpm worker:dev   # background worker (separate terminal, optional in Phase 1)
 
 The worker will heartbeat-log every 30s. Since no jobs are produced in Phase 1, you'll only see "idle" lines — that's expected.
 
-## 6. Phase 1 test plan
+## 6. Phase 2a test plan
 
-Run through these on your phone (or desktop browser):
+Phase 1 is already verified. Now exercise document upload + extraction:
 
-1. **Sign-in screen** — enter your email, tap *Send magic link*. Confirmation card appears.
-2. **Email** — open the magic link. Should land on `/projects` (empty state).
-3. **Create project** — tap *New project*, enter a name, tap *Create*. Redirects into the project home.
-4. **Quick actions** — tap each tile (Camera, Rooms, Upload, Chat). Each shows a clearly labeled "Phase X" placeholder with a back link.
-5. **Back to list** — tap the back link. Project list shows your new project.
-6. **Archive** — tap the archive icon next to a project. It disappears from the active list.
-7. **Toggle Archived view** — tap *Archived* (top-right). See archived project. Tap the rotate icon to restore.
-8. **Settings** — from any screen, tap the gear icon (top-right). See your email + user ID. Tap *Sign out* — back to sign-in.
-9. **Auto-open** — sign in again. You should land directly in the most recently opened project, not the project list.
-10. **Mobile install** — iOS Safari: *Share → Add to Home Screen*. Android Chrome: *Install app*. Launches in standalone mode.
-11. **Worker boots** (optional) — `pnpm worker:dev` prints `[worker local-NNNN] starting; poll=5000ms handlers=[none]` and then idle heartbeats.
+1. **Open a project** → tap **Upload docs** tile.
+2. **Pick a type** (Drawings / Contracts / Submittals) using the tabs at the top of the upload dialog.
+3. **Choose files** — pick one or more PDFs or images, up to 25 MB each. Bad types or oversized files show inline error messages.
+4. **Tap Upload** → progress bar fills per file, status flips to "Uploaded — extraction queued".
+5. **Library updates live** — close the dialog. The new doc shows with a *Queued* badge, then *Processing…*, then *Ready* (or *Failed*) — all without refreshing, thanks to Realtime.
+6. **Tap a document** to see extracted findings.
+   - Drawings + contracts: list of requirements with room / trade / sheet / detail / page chips.
+   - Submittals: per-product cards with manufacturer, model, spec section, install requirements.
+7. **Re-run extraction** — tap the rotate icon on a doc, or *Re-run extraction* on the detail page. Status returns to *Queued* and rolls forward again. Old findings get replaced (no duplicates).
+8. **Failure path** — drop in a corrupted or empty PDF. Status should flip to *Failed* with the error message visible on the detail page.
+9. **Delete** — tap the trash icon on a doc. Confirms, then removes both the row and the file from storage.
+10. **Worker logs** — Render dashboard → scope-check-worker → Logs. While a doc is processing you should see lines like `[worker] claimed job <uuid> kind=extract_document` and then `job complete`.
 
-If 1–10 work, Phase 1 is good — tell me to start Phase 2.
+If 1–9 work, Phase 2a is good — tell me to start Phase 2b (Voyage embeddings) or skip ahead to Phase 3 (room reconciliation), your call.
 
 ## 7. Deploy to Render
 

@@ -1,8 +1,8 @@
 // Background worker. Runs as the `scope-check-worker` Render service.
-// Phase 1: heartbeat + safe drain. Phase 2 will register real job handlers
-// (e.g. extract_document) here.
+// Polls the `jobs` table, claims work atomically, dispatches to handlers.
 
 import { createClient } from "@supabase/supabase-js";
+import { makeExtractDocumentHandler } from "./handlers/extract-document.js";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,8 +30,10 @@ type Job = {
   project_id: string | null;
 };
 
-// Phase 2 will populate this map: kind -> handler(job).
-const handlers: Record<string, (job: Job) => Promise<unknown>> = {};
+// kind -> handler(job). New handlers register here.
+const handlers: Record<string, (job: Job) => Promise<unknown>> = {
+  extract_document: makeExtractDocumentHandler(supabase),
+};
 
 let running = true;
 let lastHeartbeat = 0;
@@ -97,7 +99,7 @@ async function tick(): Promise<boolean> {
   if (!handler) {
     await failJob(
       { ...job, attempts: job.max_attempts },
-      `No handler registered for job kind "${job.kind}" (Phase 1 stub).`,
+      `No handler registered for job kind "${job.kind}".`,
     );
     return true;
   }
