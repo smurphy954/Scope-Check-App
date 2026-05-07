@@ -165,58 +165,47 @@ on conflict (id) do update
       allowed_mime_types = excluded.allowed_mime_types;
 
 -- Storage RLS: users can only touch objects whose path starts with a project they own.
+-- Service role bypasses RLS automatically, so we don't need to mention it here.
 drop policy if exists "documents_storage_select" on storage.objects;
 create policy "documents_storage_select" on storage.objects
-  for select using (
+  for select to authenticated using (
     bucket_id = 'documents'
-    and (
-      auth.role() = 'service_role'
-      or exists (
-        select 1 from public.projects p
-        where p.id::text = split_part(name, '/', 1)
-          and p.owner_id = auth.uid()
-      )
+    and exists (
+      select 1 from public.projects p
+      where p.id::text = split_part(name, '/', 1)
+        and p.owner_id = auth.uid()
     )
   );
 
 drop policy if exists "documents_storage_insert" on storage.objects;
 create policy "documents_storage_insert" on storage.objects
-  for insert with check (
+  for insert to authenticated with check (
     bucket_id = 'documents'
-    and (
-      auth.role() = 'service_role'
-      or exists (
-        select 1 from public.projects p
-        where p.id::text = split_part(name, '/', 1)
-          and p.owner_id = auth.uid()
-      )
+    and exists (
+      select 1 from public.projects p
+      where p.id::text = split_part(name, '/', 1)
+        and p.owner_id = auth.uid()
     )
   );
 
 drop policy if exists "documents_storage_update" on storage.objects;
 create policy "documents_storage_update" on storage.objects
-  for update using (
+  for update to authenticated using (
     bucket_id = 'documents'
-    and (
-      auth.role() = 'service_role'
-      or exists (
-        select 1 from public.projects p
-        where p.id::text = split_part(name, '/', 1)
-          and p.owner_id = auth.uid()
-      )
+    and exists (
+      select 1 from public.projects p
+      where p.id::text = split_part(name, '/', 1)
+        and p.owner_id = auth.uid()
     )
   );
 
 drop policy if exists "documents_storage_delete" on storage.objects;
 create policy "documents_storage_delete" on storage.objects
-  for delete using (
+  for delete to authenticated using (
     bucket_id = 'documents'
-    and (
-      auth.role() = 'service_role'
-      or exists (
-        select 1 from public.projects p
-        where p.id::text = split_part(name, '/', 1)
-          and p.owner_id = auth.uid()
-      )
+    and exists (
+      select 1 from public.projects p
+      where p.id::text = split_part(name, '/', 1)
+        and p.owner_id = auth.uid()
     )
   );
