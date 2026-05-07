@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outdoor Cabinet Materials — Client Lookbook</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --muted: #8a8a8a;
+    --rule: #d8d4cd;
+    --paper: #ffffff;
+    --warm: #f6f2ec;
+    --accent: #6b5b3e;
+    --accent-soft: #b9a988;
+    --shadow: 0 10px 30px rgba(20, 18, 12, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: #ece8e1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---------- Slide / page model ---------- */
+  .slide {
+    width: 11in;
+    min-height: 8.5in;       /* landscape letter */
+    margin: 28px auto;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    padding: 0.7in 0.85in;
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+  }
+  .slide:last-child { page-break-after: auto; }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    left: 0.85in;
+    right: 0.85in;
+    bottom: 0.45in;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .footer {
+    position: absolute;
+    left: 0.85in;
+    right: 0.85in;
+    bottom: 0.22in;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  h1, h2, h3, h4 { font-family: "Didot", "Playfair Display", Georgia, serif; font-weight: 400; letter-spacing: 0.01em; }
+  h1 { font-size: 56px; line-height: 1.05; margin: 0 0 18px; }
+  h2 { font-size: 38px; line-height: 1.1; margin: 0 0 14px; }
+  h3 { font-size: 22px; line-height: 1.2; margin: 0 0 10px; }
+  h4 { font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; font-family: "Helvetica Neue", Arial, sans-serif; color: var(--accent); margin: 0 0 8px; font-weight: 700; }
+  p { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 12px; }
+  ul { padding-left: 18px; margin: 0 0 14px; }
+  li { font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 6px; }
+
+  /* ---------- Cover slide ---------- */
+  .cover { padding: 0; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .hero {
+    flex: 1;
+    background: linear-gradient(180deg, rgba(20,18,12,0.25), rgba(20,18,12,0.55)),
+                var(--cover-img, linear-gradient(135deg, #2c2820, #6b5b3e));
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.85in;
+  }
+  .cover .hero .eyebrow { color: rgba(255,255,255,0.85); }
+  .cover .hero h1 { color: #fff; font-size: 64px; max-width: 8in; }
+  .cover .hero .lede { color: rgba(255,255,255,0.85); max-width: 6.5in; font-size: 16px; }
+  .cover .meta {
+    background: var(--warm);
+    padding: 0.35in 0.85in;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cover .meta strong { color: var(--ink); letter-spacing: 0.22em; }
+  .cover::after { display: none; }
+  .cover .footer { display: none; }
+
+  /* ---------- TOC ---------- */
+  .toc-list { list-style: none; padding: 0; margin: 24px 0 0; }
+  .toc-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .toc-list li .label { font-family: "Didot", "Playfair Display", Georgia, serif; font-size: 22px; }
+  .toc-list li .num { font-size: 12px; letter-spacing: 0.22em; color: var(--muted); }
+  .toc-list li .sub { display:block; font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: 0.04em; }
+
+  /* ---------- Content layout ---------- */
+  .layout-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .layout-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; align-items: start; }
+  .layout-feature { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; }
+
+  .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin-top: 10px; }
+  .spec-grid > div { font-size: 12.5px; color: var(--ink-soft); }
+  .spec-grid strong { display: block; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; font-weight: 700; }
+
+  .pull {
+    border-left: 3px solid var(--accent-soft);
+    padding: 6px 0 6px 16px;
+    margin: 16px 0;
+    font-family: "Didot", "Playfair Display", Georgia, serif;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  /* ---------- Photo frames ---------- */
+  .photo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--warm);
+    border: 1px dashed var(--rule);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo .placeholder {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+  }
+  .photo .placeholder code {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--accent);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  /* Hide placeholder when img loads successfully */
+  .photo img + .placeholder { display: none; }
+
+  .photo.tall { aspect-ratio: 3 / 4; }
+  .photo.wide { aspect-ratio: 16 / 9; }
+  .photo.square { aspect-ratio: 1 / 1; }
+
+  .photo-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .photo-grid-4 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+
+  .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .swatch {
+    width: 70px; height: 70px;
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+    display: flex; align-items: flex-end; justify-content: center;
+    font-size: 9px; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.95);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    padding: 4px;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  /* ---------- Section divider slides ---------- */
+  .divider {
+    background: var(--ink);
+    color: #f6f2ec;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.85in;
+  }
+  .divider::after { display: none; }
+  .divider .eyebrow { color: var(--accent-soft); }
+  .divider h1 { color: #f6f2ec; font-size: 76px; line-height: 1.0; }
+  .divider .lede { color: rgba(246,242,236,0.7); max-width: 7in; font-size: 16px; }
+  .divider .footer { color: rgba(246,242,236,0.45); }
+
+  /* ---------- Comparison table ---------- */
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+  table.compare th, table.compare td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  table.compare th {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    background: var(--warm);
+  }
+  table.compare td.name { font-family: "Didot", Georgia, serif; font-size: 15px; color: var(--ink); }
+
+  /* ---------- Print styles ---------- */
+  @page { size: 11in 8.5in; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .slide {
+      margin: 0;
+      box-shadow: none;
+      width: 11in;
+      height: 8.5in;
+      min-height: 8.5in;
+    }
+    .no-print { display: none !important; }
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    position: fixed;
+    top: 14px; right: 14px;
+    background: rgba(26,26,26,0.92);
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .toolbar button {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <span>Cabinet Lookbook</span>
+  <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<!-- ====================================================== -->
+<!-- 1. COVER                                                -->
+<!-- ====================================================== -->
+<section class="slide cover">
+  <div class="hero" style="background-image: linear-gradient(180deg, rgba(20,18,12,0.35), rgba(20,18,12,0.7)), url('images/cover/hero.jpg');">
+    <div class="eyebrow">Outdoor Living &middot; Cabinet Materials</div>
+    <h1>The Cabinet Lookbook</h1>
+    <p class="lede">A curated guide to the premium outdoor cabinet collections available for your project &mdash; engineered to perform in coastal and tropical climates without compromising on the look of a refined indoor kitchen.</p>
+  </div>
+  <div class="meta">
+    <span>Prepared for <strong>Client</strong></span>
+    <span>Outdoor Kitchen Cabinetry</span>
+    <span>2026 Edition</span>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 2. INTRODUCTION                                         -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Welcome</div>
+  <h2>Built for the elements. Designed for the eye.</h2>
+  <div class="layout-feature" style="margin-top: 20px;">
+    <div>
+      <p>Every cabinet line in this book has been selected for one reason: it has to look beautiful and stay beautiful, year after year, in real outdoor conditions &mdash; sun, salt air, humidity, rain, and the occasional hurricane season.</p>
+      <p>What separates these collections is <em>how</em> they get there: marine-grade polymer, powder-coated stainless steel, acetylated wood, weatherproof polyurethane resin, or compact phenolic board. Each material has a personality. Each finish opens up a different design direction.</p>
+      <p>The pages that follow walk through every collection &mdash; what it's made of, how it looks, and where it shines &mdash; so you can choose the language for your outdoor kitchen with confidence.</p>
+      <div class="pull">"The right cabinet doesn't just survive outside &mdash; it belongs there."</div>
+    </div>
+    <div class="photo tall">
+      <img src="images/cover/intro.jpg" alt="" onerror="this.style.display='none'" />
+      <div class="placeholder">Hero image<code>images/cover/intro.jpg</code></div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>01 &middot; Welcome</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 3. TABLE OF CONTENTS                                    -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Contents</div>
+  <h2>The Collections</h2>
+  <ul class="toc-list">
+    <li>
+      <span class="label">Danver Outdoor Kitchens
+        <span class="sub">Powder-coated stainless steel &middot; Urbane &amp; Cosmopolitan</span>
+      </span>
+      <span class="num">04 &mdash; 06</span>
+    </li>
+    <li>
+      <span class="label">Brown Jordan Outdoor Kitchens
+        <span class="sub">Stainless steel, frameless &middot; TECNO &amp; Elements</span>
+      </span>
+      <span class="num">07 &mdash; 09</span>
+    </li>
+    <li>
+      <span class="label">NatureKast
+        <span class="sub">100% weatherproof polyurethane resin &middot; wood-look</span>
+      </span>
+      <span class="num">10 &mdash; 11</span>
+    </li>
+    <li>
+      <span class="label">Sonoma Compact Collection
+        <span class="sub">16 mm phenolic compact board &middot; modern flat panel</span>
+      </span>
+      <span class="num">12</span>
+    </li>
+    <li>
+      <span class="label">Windswept Collection
+        <span class="sub">Acetylated Accoya wood &middot; true-wood look, weatherproof</span>
+      </span>
+      <span class="num">13</span>
+    </li>
+    <li>
+      <span class="label">HDPE Marine Grade Collection
+        <span class="sub">King StarBoard polymer &middot; lifetime, marine-tough</span>
+      </span>
+      <span class="num">14</span>
+    </li>
+    <li>
+      <span class="label">At-a-Glance Comparison
+        <span class="sub">Material, finish, warranty, ideal use</span>
+      </span>
+      <span class="num">15</span>
+    </li>
+    <li>
+      <span class="label">Next Steps
+        <span class="sub">Selection process &amp; what we need from you</span>
+      </span>
+      <span class="num">16</span>
+    </li>
+  </ul>
+  <div class="footer"><span>Cabinet Lookbook</span><span>02 &middot; Contents</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 4. DANVER DIVIDER                                       -->
+<!-- ====================================================== -->
+<section class="slide divider">
+  <div class="eyebrow">Collection 01</div>
+  <h1>Danver<br/>Outdoor Kitchens</h1>
+  <p class="lede">Built-to-order, powder-coated stainless steel cabinetry. American-made. Endless finish options &mdash; from bright neutrals to realistic wood-grain &mdash; engineered to never rust.</p>
+  <div class="footer"><span>Cabinet Lookbook</span><span>03 &middot; Danver</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 5. DANVER OVERVIEW                                      -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Danver &middot; Overview</div>
+  <h2>Stainless steel, dressed for the outdoors.</h2>
+  <div class="layout-feature">
+    <div>
+      <p>Danver pioneered the powder-coated stainless steel outdoor cabinet. Every box is fully welded stainless, then painted on every face <em>before</em> assembly &mdash; so the steel is never directly exposed to the environment.</p>
+      <p>The result: a cabinet that won't rust, won't rot, won't warp, and can be matched to virtually any architectural palette.</p>
+      <h4>Why Danver</h4>
+      <ul>
+        <li>Built-to-order in Wallingford, CT &mdash; not a stock SKU.</li>
+        <li>13 powder-coat colors plus 9 realistic wood-grain finishes.</li>
+        <li>Soft-close doors and drawers, magnets and gaskets on every door for high-wind / rooftop installs.</li>
+        <li>Fully integrates grills, refrigeration, sinks, and trash &mdash; designed around premium appliances.</li>
+        <li>Two flagship collections in this book: <strong>Urbane</strong> and <strong>Cosmopolitan</strong>.</li>
+      </ul>
+    </div>
+    <div class="photo-grid-4">
+      <div class="photo"><img src="images/danver-urbane/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Danver kitchen<code>images/danver-urbane/01.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-urbane/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Danver detail<code>images/danver-urbane/02.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-cosmopolitan/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Cosmopolitan<code>images/danver-cosmopolitan/01.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-cosmopolitan/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Cosmopolitan detail<code>images/danver-cosmopolitan/02.jpg</code></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>04 &middot; Danver Overview</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 6. DANVER URBANE                                        -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Danver &middot; Collection</div>
+  <h2>Urbane</h2>
+  <p style="max-width: 8.5in;">A collaboration with international architect and designer Daniel Germani, Urbane draws from heritage-style European kitchens to bring a timeless, slightly classical sensibility outdoors. Stainless steel framing meets shaker-inspired panels, soft-close everything, and a deep palette of finishes.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div class="photo-grid-3" style="grid-template-rows: 1fr 1fr;">
+      <div class="photo" style="grid-column: 1 / span 2; aspect-ratio: 16/9;"><img src="images/danver-urbane/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Urbane hero<code>images/danver-urbane/hero.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-urbane/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-urbane/04.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>04.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-urbane/05.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>05.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-urbane/06.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>06.jpg</code></div></div>
+    </div>
+    <div>
+      <h4>Design Language</h4>
+      <p>Refined stainless steel trim against painted center panels &mdash; visual contrast without busy detailing.</p>
+      <h4>Frame Options</h4>
+      <ul>
+        <li>Stainless Steel (raw)</li>
+        <li>Plata 62 (warm pewter)</li>
+        <li>Midnight Matte</li>
+      </ul>
+      <h4>Functional Details</h4>
+      <ul>
+        <li>Soft-close doors and drawers across the range.</li>
+        <li>Adjustable shelves throughout.</li>
+        <li>Magnets and gaskets on every door &mdash; rated for high winds and rooftop installs.</li>
+        <li>Designed to integrate sink, grill, refrigeration, and trash.</li>
+      </ul>
+      <div class="pull">European heritage, outdoor engineering.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>05 &middot; Danver Urbane</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 7. DANVER COSMOPOLITAN                                  -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Danver &middot; Collection</div>
+  <h2>Cosmopolitan</h2>
+  <p style="max-width: 8.5in;">Also designed in collaboration with Daniel Germani, Cosmopolitan is the minimalist counterpart to Urbane &mdash; an aluminum-framed, slat-front cabinet that reads more like outdoor furniture than traditional casework. The architecture is the appliance.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div>
+      <h4>Construction</h4>
+      <p>Powder-coated stainless steel storage and drawer boxes hung from a Midnight Matte powder-coated aluminum frame. Boxes can mount from the top rail or sit on a lower shelf &mdash; reconfigurable as the kitchen evolves.</p>
+      <h4>Finishes</h4>
+      <ul>
+        <li>Frame: Midnight Matte (standard)</li>
+        <li>Slats: any Danver powder-coat color, including all wood-grain options.</li>
+        <li>Drawer interior: Walnut wood-grain (standard) or matched to slat selection.</li>
+      </ul>
+      <h4>Why It Works Outdoors</h4>
+      <ul>
+        <li>Aluminum frame &mdash; no rust risk, even at the coast.</li>
+        <li>Open architecture lets air move &mdash; reduces humidity build-up.</li>
+        <li>Modular: add or remove storage modules without rebuilding the run.</li>
+      </ul>
+      <div class="pull">Fresh, minimalist, all-weather.</div>
+    </div>
+    <div class="photo-grid-3" style="grid-template-rows: auto auto;">
+      <div class="photo" style="grid-column: 1 / span 3; aspect-ratio: 16/9;"><img src="images/danver-cosmopolitan/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Cosmopolitan hero<code>images/danver-cosmopolitan/hero.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-cosmopolitan/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-cosmopolitan/04.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>04.jpg</code></div></div>
+      <div class="photo"><img src="images/danver-cosmopolitan/05.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>05.jpg</code></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>06 &middot; Danver Cosmopolitan</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 8. BROWN JORDAN DIVIDER                                 -->
+<!-- ====================================================== -->
+<section class="slide divider">
+  <div class="eyebrow">Collection 02</div>
+  <h1>Brown Jordan<br/>Outdoor Kitchens</h1>
+  <p class="lede">Stainless steel, powder-coated, frameless. A Euro-inspired language with a single-height façade and the architectural restraint of an indoor flush-line kitchen &mdash; engineered for outdoor life.</p>
+  <div class="footer"><span>Cabinet Lookbook</span><span>07 &middot; Brown Jordan</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 9. BROWN JORDAN TECNO                                   -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Brown Jordan &middot; Collection</div>
+  <h2>TECNO</h2>
+  <p style="max-width: 8.5in;">TECNO is the flagship Euro-inspired luxury line &mdash; a sleek, frameless stainless steel cabinet with a single, uninterrupted façade height. Developed in ongoing collaboration with Dekton by Cosentino and Daniel Germani Designs.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div class="photo-grid-3" style="grid-template-rows: auto auto;">
+      <div class="photo" style="grid-column: 1 / span 3; aspect-ratio: 16/9;"><img src="images/brown-jordan-tecno/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">TECNO hero<code>images/brown-jordan-tecno/hero.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-tecno/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>01.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-tecno/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>02.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-tecno/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+    </div>
+    <div>
+      <h4>Construction</h4>
+      <p>Cabinet boxes are stainless steel. Every door component is powder-coated <em>before</em> assembly &mdash; no exposed steel edges &mdash; for a virtually maintenance-free finish that resists rust over the long term.</p>
+      <h4>Design Cues</h4>
+      <ul>
+        <li>Frameless face &mdash; doors meet edge-to-edge.</li>
+        <li>Single-height façade &mdash; reads as one continuous line of cabinetry.</li>
+        <li>Minimalist hardware (push-to-open available).</li>
+        <li>Pairs natively with Dekton work surfaces.</li>
+      </ul>
+      <h4>Best For</h4>
+      <ul>
+        <li>Modern and contemporary homes.</li>
+        <li>Long, uninterrupted runs and kitchen islands.</li>
+        <li>Coastal sites where corrosion is the primary concern.</li>
+      </ul>
+      <div class="pull">Frameless. Continuous. Almost architectural.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>08 &middot; Brown Jordan TECNO</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 10. BROWN JORDAN ELEMENTS                               -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Brown Jordan &middot; Collection</div>
+  <h2>Elements by TECNO</h2>
+  <p style="max-width: 8.5in;">Elements is Brown Jordan's modular, furniture-inspired line &mdash; another Daniel Germani collaboration. Where TECNO is one continuous architectural plane, Elements is a kit of parts: discrete cooking, prep, storage, and serving modules that can be combined to fit any footprint.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div>
+      <h4>Modular Approach</h4>
+      <p>Each element is a finished, free-standing module. Lay them in line for a long galley, wrap them around a corner, or float a single island for a small terrace &mdash; the kit is the design system.</p>
+      <h4>Materials &amp; Finish</h4>
+      <ul>
+        <li>Powder-coated stainless steel construction (TECNO platform).</li>
+        <li>Choice of finish across modules &mdash; mix neutrals and accents.</li>
+        <li>Optional Dekton tops for integrated work surfaces.</li>
+      </ul>
+      <h4>Why Specifiers Choose It</h4>
+      <ul>
+        <li>Fits irregular or compact terraces where built-ins won't.</li>
+        <li>Re-configurable later &mdash; modules can move.</li>
+        <li>Reads as outdoor furniture; not "casework planted outside."</li>
+      </ul>
+      <div class="pull">Furniture-grade modularity, kitchen-grade performance.</div>
+    </div>
+    <div class="photo-grid-4">
+      <div class="photo"><img src="images/brown-jordan-elements/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Module<code>01.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-elements/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Module<code>02.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-elements/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Module<code>03.jpg</code></div></div>
+      <div class="photo"><img src="images/brown-jordan-elements/04.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Module<code>04.jpg</code></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>09 &middot; Brown Jordan Elements</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 11. NATUREKAST DIVIDER                                  -->
+<!-- ====================================================== -->
+<section class="slide divider">
+  <div class="eyebrow">Collection 03</div>
+  <h1>NatureKast</h1>
+  <p class="lede">The first range of 100% weatherproof outdoor cabinets that look and feel like a high-end indoor kitchen. Realistic wood, stone, brick, and coral panels &mdash; molded in marine-grade resin.</p>
+  <div class="footer"><span>Cabinet Lookbook</span><span>10 &middot; NatureKast</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 12. NATUREKAST DETAIL                                   -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">NatureKast &middot; Collection</div>
+  <h2>Indoor warmth, outdoor durability.</h2>
+  <div class="layout-feature" style="margin-top: 14px;">
+    <div>
+      <p>NatureKast doors and panels are molded in <strong>high-density polyurethane resin</strong> and hand-finished to look and feel like real wood. Euro doors and panels use <strong>high-pressure phenolic laminate</strong>. The result: details that have only ever been available indoors &mdash; corbels, trim, crown moldings, real wood-grain &mdash; now rated for full-time outdoor use.</p>
+      <h4>Door Styles</h4>
+      <ul>
+        <li><strong>Slab</strong> &mdash; clean, modern, flat panel.</li>
+        <li><strong>Shaker</strong> &mdash; classic five-piece frame and panel.</li>
+        <li><strong>Rustique</strong> &mdash; reclaimed-wood character with visible grain.</li>
+        <li><strong>Louver</strong> &mdash; horizontal slat detailing for coastal looks.</li>
+        <li><strong>Contempo</strong> &mdash; minimalist contemporary profile.</li>
+        <li><strong>Euro</strong> &mdash; high-pressure phenolic laminate, ultra-flat.</li>
+      </ul>
+      <h4>Panel Looks Beyond Wood</h4>
+      <ul>
+        <li>Stack stone &middot; Brick &middot; Coral stone (molded panels).</li>
+        <li>Matching corbels, trim, and crown moldings.</li>
+      </ul>
+      <h4>Cabinet Range</h4>
+      <p>Base, grill, insert, ceramic-grill, bench, hood, wall, and tall cabinets &mdash; a complete range, not just a few SKUs.</p>
+    </div>
+    <div>
+      <div class="photo wide" style="margin-bottom: 10px;"><img src="images/naturekast/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">NatureKast hero<code>images/naturekast/hero.jpg</code></div></div>
+      <div class="photo-grid-3">
+        <div class="photo"><img src="images/naturekast/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Door style<code>01.jpg</code></div></div>
+        <div class="photo"><img src="images/naturekast/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Finish<code>02.jpg</code></div></div>
+        <div class="photo"><img src="images/naturekast/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+      </div>
+      <div class="pull" style="margin-top: 16px;">Looks like the indoor kitchen you'd build &mdash; behaves like the outdoor cabinet you need.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>11 &middot; NatureKast</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 13. SONOMA COMPACT                                      -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Collection 04</div>
+  <h2>Sonoma Compact Collection</h2>
+  <p style="max-width: 8.5in;">A modern, minimalist cabinet built around a single material: 16&nbsp;mm <strong>compact phenolic board</strong> &mdash; 64 layers of resin-soaked craft paper heat-pressed into a homogenous, fully solid sheet. The same material specified for laboratory casework and high-traffic public restrooms, finished here for residential outdoor kitchens.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div class="photo-grid-3" style="grid-template-rows: auto auto;">
+      <div class="photo" style="grid-column: 1 / span 3; aspect-ratio: 16/9;"><img src="images/sonoma-compact/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Sonoma hero<code>images/sonoma-compact/hero.jpg</code></div></div>
+      <div class="photo"><img src="images/sonoma-compact/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>01.jpg</code></div></div>
+      <div class="photo"><img src="images/sonoma-compact/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>02.jpg</code></div></div>
+      <div class="photo"><img src="images/sonoma-compact/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+    </div>
+    <div>
+      <h4>What Makes It Different</h4>
+      <ul>
+        <li>Solid through-and-through &mdash; not a substrate with a skin.</li>
+        <li>All edges polished black for a clean modern reveal.</li>
+        <li>Will not delaminate, swell, or absorb moisture.</li>
+        <li>Resists impact, chemicals, UV, and graffiti-grade abuse.</li>
+      </ul>
+      <h4>Door Front Options</h4>
+      <p>A range of front colors and surface options &mdash; matte solids, woodgrain prints, and stone-look finishes &mdash; all with the same signature black edge.</p>
+      <h4>Best For</h4>
+      <ul>
+        <li>Modern, architectural homes.</li>
+        <li>Owners who want the cleanest possible flat-panel look.</li>
+        <li>High-use spaces where the surface needs to take a beating.</li>
+      </ul>
+      <div class="pull">One material. Sixty-four layers. Zero compromise.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>12 &middot; Sonoma Compact</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 14. WINDSWEPT                                           -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Collection 05</div>
+  <h2>Windswept Collection</h2>
+  <p style="max-width: 8.5in;">For projects that want the warmth of <em>real wood</em> outdoors. Windswept doors are made from <strong>Accoya</strong> &mdash; radiata pine sourced and processed in the Netherlands, then modified through a process called <strong>acetylation</strong> that converts it into an extremely stable, weatherproof lumber.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div>
+      <h4>The Material</h4>
+      <p>Acetylation chemically modifies the wood at a cellular level &mdash; the result is a board that resists rot, fungal attack, and dimensional change due to moisture. It is genuine timber that performs like a polymer.</p>
+      <h4>Door Styles</h4>
+      <ul>
+        <li><strong>Shaker</strong> &mdash; classic five-piece construction with a floating center panel; engineered so any small natural variance in the wood will not warp or distort the door.</li>
+        <li><strong>Louver</strong> &mdash; the most intricate option, with overlapping horizontal slats.</li>
+        <li><strong>Slab</strong> &mdash; cleanest and most minimal.</li>
+      </ul>
+      <h4>Why It's Specified</h4>
+      <ul>
+        <li>True wood look and feel &mdash; not a print or a faux finish.</li>
+        <li>Holds finish beautifully; can be stained or painted.</li>
+        <li>Backed by a <strong>10-year warranty</strong> on the doors.</li>
+      </ul>
+      <div class="pull">Real timber. Built to stay still.</div>
+    </div>
+    <div class="photo-grid-4">
+      <div class="photo"><img src="images/windswept/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Shaker door<code>01.jpg</code></div></div>
+      <div class="photo"><img src="images/windswept/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Louver door<code>02.jpg</code></div></div>
+      <div class="photo"><img src="images/windswept/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Slab door<code>03.jpg</code></div></div>
+      <div class="photo"><img src="images/windswept/04.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Installed<code>04.jpg</code></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>13 &middot; Windswept</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 15. HDPE MARINE                                         -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Collection 06</div>
+  <h2>HDPE Marine Grade Collection</h2>
+  <p style="max-width: 8.5in;">100% American-made starboard cabinetry &mdash; the same <strong>marine-grade polymer</strong> used to build boat consoles, dock boxes, and pool deck furniture. When the brief is "set it and forget it," this is the cabinet.</p>
+  <div class="layout-2col" style="margin-top: 18px;">
+    <div class="photo-grid-3" style="grid-template-rows: auto auto;">
+      <div class="photo" style="grid-column: 1 / span 3; aspect-ratio: 16/9;"><img src="images/hdpe-marine/hero.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">HDPE hero<code>images/hdpe-marine/hero.jpg</code></div></div>
+      <div class="photo"><img src="images/hdpe-marine/01.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>01.jpg</code></div></div>
+      <div class="photo"><img src="images/hdpe-marine/02.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>02.jpg</code></div></div>
+      <div class="photo"><img src="images/hdpe-marine/03.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Detail<code>03.jpg</code></div></div>
+    </div>
+    <div>
+      <h4>The Material</h4>
+      <p>High-density polyethylene &mdash; a marine-grade polymer that <strong>won't mold, won't rust, won't rot, and won't retain harmful bacteria.</strong> Where many outdoor kitchens use a metal frame and live with the inevitable possibility of corrosion, an HDPE cabinet simply doesn't go there.</p>
+      <h4>Why South Florida Owners Choose It</h4>
+      <ul>
+        <li>Built to hold up to salt air, hurricane-season humidity, and direct sun.</li>
+        <li>Maintenance-free &mdash; no refinishing, no resealing, no rust touch-ups.</li>
+        <li>Maximum interior storage &mdash; no metal frame consuming wall thickness.</li>
+        <li>Hose it down and it looks new.</li>
+      </ul>
+      <h4>Quality &amp; Warranty</h4>
+      <ul>
+        <li>100% American-made.</li>
+        <li>Manufacturer's <strong>limited lifetime warranty</strong>.</li>
+        <li>State-of-the-art CNC fabrication.</li>
+      </ul>
+      <div class="pull">If the boats can live in it, your kitchen can too.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>14 &middot; HDPE Marine</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 16. COMPARISON                                          -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Side by Side</div>
+  <h2>At a Glance</h2>
+  <p style="max-width: 8.5in;">A quick reference to help narrow the field. We'll work through this together &mdash; this page is a starting point, not a verdict.</p>
+  <table class="compare">
+    <thead>
+      <tr>
+        <th style="width: 16%;">Collection</th>
+        <th style="width: 18%;">Core Material</th>
+        <th style="width: 22%;">Design Language</th>
+        <th style="width: 22%;">Best For</th>
+        <th style="width: 22%;">Headline Feature</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name">Danver Urbane</td>
+        <td>Powder-coated stainless steel</td>
+        <td>Heritage European, refined trim</td>
+        <td>Transitional &amp; classic homes</td>
+        <td>13 colors + 9 wood-grain finishes</td>
+      </tr>
+      <tr>
+        <td class="name">Danver Cosmopolitan</td>
+        <td>Aluminum frame + powder-coated stainless boxes</td>
+        <td>Minimalist, slat-front, furniture-like</td>
+        <td>Modern terraces &amp; rooftops</td>
+        <td>Modular, reconfigurable</td>
+      </tr>
+      <tr>
+        <td class="name">Brown Jordan TECNO</td>
+        <td>Powder-coated stainless steel</td>
+        <td>Frameless, single-height façade</td>
+        <td>Long, continuous modern runs</td>
+        <td>Painted before assembly &mdash; no exposed steel</td>
+      </tr>
+      <tr>
+        <td class="name">Brown Jordan Elements</td>
+        <td>Powder-coated stainless steel</td>
+        <td>Modular furniture-inspired pieces</td>
+        <td>Compact or irregular footprints</td>
+        <td>Re-configurable kit of parts</td>
+      </tr>
+      <tr>
+        <td class="name">NatureKast</td>
+        <td>High-density polyurethane resin (Euro: phenolic)</td>
+        <td>Indoor-style: Slab, Shaker, Rustique, Louver, Contempo, Euro</td>
+        <td>Owners who want indoor warmth outdoors</td>
+        <td>Wood/stone/brick looks, fully weatherproof</td>
+      </tr>
+      <tr>
+        <td class="name">Sonoma Compact</td>
+        <td>16 mm phenolic compact board</td>
+        <td>Modern flat-panel, polished black edge</td>
+        <td>Architectural modern homes</td>
+        <td>Solid through-and-through, no delamination</td>
+      </tr>
+      <tr>
+        <td class="name">Windswept</td>
+        <td>Accoya (acetylated wood)</td>
+        <td>Real wood: Shaker, Louver, Slab</td>
+        <td>Owners who insist on genuine timber</td>
+        <td>10-year door warranty on real wood</td>
+      </tr>
+      <tr>
+        <td class="name">HDPE Marine Grade</td>
+        <td>Marine-grade HDPE polymer</td>
+        <td>Clean, utilitarian, color-through</td>
+        <td>Coastal, salt-air, pool-side</td>
+        <td>Limited lifetime warranty &middot; zero maintenance</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="footer"><span>Cabinet Lookbook</span><span>15 &middot; Comparison</span></div>
+</section>
+
+<!-- ====================================================== -->
+<!-- 17. NEXT STEPS                                          -->
+<!-- ====================================================== -->
+<section class="slide">
+  <div class="eyebrow">Next Steps</div>
+  <h2>How we move from book to build.</h2>
+  <div class="layout-feature" style="margin-top: 22px;">
+    <div>
+      <h4>1 &middot; Shortlist</h4>
+      <p>Pick two or three collections from this book that speak to you. We'll bring physical samples of finishes and door fronts for the ones you like.</p>
+      <h4>2 &middot; Layout &amp; Appliances</h4>
+      <p>We confirm the kitchen footprint, appliances (grill, refrigeration, sink, ventilation), and any integration points &mdash; pergola, countertops, hardscape.</p>
+      <h4>3 &middot; Renderings &amp; Pricing</h4>
+      <p>You'll receive a final 3D rendering, a detailed specification sheet, and a fixed-price proposal for the selected collection.</p>
+      <h4>4 &middot; Build</h4>
+      <p>Cabinets are built to order. Lead times vary by collection &mdash; we'll confirm a delivery and install window with the proposal.</p>
+      <h4>What We Need From You</h4>
+      <ul>
+        <li>Confirmed appliance package (or budget for us to spec one).</li>
+        <li>Site access for measurements.</li>
+        <li>Finish direction &mdash; warm vs. cool, neutral vs. statement.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="photo tall"><img src="images/cover/closing.jpg" alt="" onerror="this.style.display='none'"/><div class="placeholder">Closing image<code>images/cover/closing.jpg</code></div></div>
+      <div class="pull" style="margin-top: 18px;">When you're ready, we'll bring the samples to you.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Cabinet Lookbook</span><span>16 &middot; Next Steps</span></div>
+</section>
+
+<script>
+  // Hide placeholder text only when the matching <img> actually rendered.
+  document.querySelectorAll('.photo img').forEach(img => {
+    if (!img.complete || img.naturalWidth === 0) {
+      img.addEventListener('error', () => { img.style.display = 'none'; });
+    }
+  });
+</script>
+
+</body>
+</html>
