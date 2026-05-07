@@ -1,0 +1,57 @@
+# Render Blueprint --- https://render.com/docs/blueprint-spec
+# Deploys two services from the same repo:
+#   1. scope-check-web    --- the Next.js app (public HTTPS)
+#   2. scope-check-worker --- background worker that drains the jobs queue
+#
+# After connecting this repo as a Blueprint, paste env var values in the
+# Render dashboard for each `sync: false` entry.
+
+services:
+  - type: web
+    name: scope-check-web
+    runtime: node
+    plan: pro
+    region: oregon
+    branch: main
+    autoDeploy: true
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /sign-in
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PNPM_VERSION
+        value: "10"
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+
+  - type: worker
+    name: scope-check-worker
+    runtime: node
+    plan: pro
+    region: oregon
+    branch: main
+    autoDeploy: true
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: pnpm worker
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PNPM_VERSION
+        value: "10"
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: WORKER_POLL_MS
+        value: "5000"
